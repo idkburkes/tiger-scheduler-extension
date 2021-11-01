@@ -1,9 +1,27 @@
 const express = require('express');
 const app = express();
 const parser = require('./parser.js');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 
 app.use(express.json())
+
+// Apply express middlewares
+app.use(cors())
+cors({credentials: true, origin: true})
+app.options('*', cors()) // Enable CORs for all origins
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.all('', function(req, res, next) {
+ res.header("Access-Control-Allow-Origin", "*");
+ res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+ res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+ //Auth Each API Request created by user.
+ next();
+});
+
 
 //Routes
 app.get('/', (req, res) => {

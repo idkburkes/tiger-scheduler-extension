@@ -12,6 +12,7 @@ function OfficialRatings() {
 
   // These routes will have to be set after server is deployed (not localhost)
 const ratingsRoute = "http://localhost:3000/api/ratings";
+const expressRoute = "https://tiger-scheduler-express.herokuapp.com/api/ratings";
 
                 useEffect( () => {
                     // Send message to background script to request instructors currently on the screen
@@ -30,7 +31,7 @@ const ratingsRoute = "http://localhost:3000/api/ratings";
                   
 
                           const fetchInstructorData = () => {
-                            fetch(ratingsRoute, {
+                            fetch(expressRoute, {
                               method: 'POST',
                               headers: {'Content-Type': 'application/json' },
                               //The body of POST will be the professor names parsed from Tiger Scheduler page 
