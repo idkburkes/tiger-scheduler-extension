@@ -12,7 +12,7 @@ function OfficialRatings() {
 
   // Server API routes
 const localAPI = "http://localhost:3000/api/ratings";
-const netlifyAPI = "https://tiger-scheduler-extension.netlify.app/api/ratings";
+const netlifyAPI = "https://tiger-scheduler-extension.netlify.app/.netlify/functions/index/api/ratings";
 
                 useEffect( () => {
                     // Send message to background script to request instructors currently on the screen

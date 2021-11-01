@@ -8,20 +8,39 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 app.use(express.json())
-app.use(cors({
-  origin: '*'
-}));
-
-
 const router = express.Router();
 
-//Routes
-router.get('/', (req, res) => {
-  return res.send('Received a GET HTTP method');
+
+ // Apply express middlewares
+ app.use(cors())
+ cors({credentials: true, origin: true})
+ app.options('*', cors()) // Enable CORs for all origins
+ app.use(bodyParser.json())
+ app.use(bodyParser.urlencoded({ extended: true }))
+
+ app.all('', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  //Auth Each API Request created by user.
+  next();
 });
- 
+
+
+
+//Set up routes
+app.use('/.netlify/functions/index', router);  // path must route to lambda
+
+// Define Routes
+router.get('/', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write('<h1> Tiger Scheduler Google Chrome Extension</h1>');
+  res.end();
+});
+
+
 router.post('/api/ratings', async (req, res) => {
-  console.log("Received post request from client" + JSON.stringify(req.body));
+console.log("Received post request from client" + JSON.stringify(req.body));
   
   // Retrieve instructor's data from RateMyProfessors.com
   var instructorData = await parser.fetchInstructorProfiles(req.body);
@@ -39,16 +58,5 @@ router.delete('/', (req, res) => {
 });
 
 
-app.use('/.netlify/functions/server', router);  // path must route to lambda
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
-app.use(bodyParser);
-
-
-// TODO: Figure out how to set environment variable for server
-var port = process.env.PORT || 3000;
-
-app.listen(port, () =>
-  console.log(`Express server started on ${port}!`),
-);
-
+module.exports = app;
 module.exports.handler = serverless(app);
