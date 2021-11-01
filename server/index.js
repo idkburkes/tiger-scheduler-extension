@@ -5,9 +5,14 @@ const parser = require('./parser.js');
 const path = require('path');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
-
+const cors = require('cors');
 
 app.use(express.json())
+app.use(cors({
+  origin: '*'
+}));
+
+
 const router = express.Router();
 
 //Routes

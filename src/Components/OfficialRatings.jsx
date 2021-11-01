@@ -10,8 +10,9 @@ function OfficialRatings() {
   const [instructorReviews, setInstructorReviews] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // These routes will have to be set after server is deployed (not localhost)
-const ratingsRoute = "http://localhost:3000/api/ratings";
+  // Server API routes
+const localAPI = "http://localhost:3000/api/ratings";
+const netlifyAPI = "https://tiger-scheduler-extension.netlify.app/api/ratings";
 
                 useEffect( () => {
                     // Send message to background script to request instructors currently on the screen
@@ -30,7 +31,7 @@ const ratingsRoute = "http://localhost:3000/api/ratings";
                   
 
                           const fetchInstructorData = () => {
-                            fetch(ratingsRoute, {
+                            fetch(netlifyAPI, {
                               method: 'POST',
                               headers: {'Content-Type': 'application/json' },
                               //The body of POST will be the professor names parsed from Tiger Scheduler page 
