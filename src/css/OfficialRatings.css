@@ -1,0 +1,7 @@
+
+
+.ratings {
+    max-height: 25%;
+    overflow-y: auto;
+    max-width: 75%;
+}

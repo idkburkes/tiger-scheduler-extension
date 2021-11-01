@@ -1,25 +1,38 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
+  "manifest_version": 2,
+
+  "name": "Auburn University Rate-My-Professor Chrome Extension",
+  "description": "Google Chrome Extension for viewing Rate-My-Professor reviews while searching for classes on Tiger Scheduler",
+  "version": "0.0.1",
+
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "Open the popup"
+  },
+  "icons": {
+    "16": "au-logo16.png",
+    "48": "au-logo48.png",
+    "128": "au-logo128.png"
+  },
+  "permissions": [
+    "http://localhost:3000/*",
+    "activeTab",
+    "https://tigerschedule.auburn.edu/*",
+    "http://tigerschedule.auburn.edu/*"
+  ],
+  "content_scripts": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "matches": [
+        "https://tigerschedule.auburn.edu/*",
+        "http://tigerschedule.auburn.edu/*"
+      ],
+      "js": ["content_script.js"],
+      "run_at": "document_end"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_security_policy": "script-src 'self' 'sha256-+7j8LwMnwV0ErQNvLbjk6x6YHsEbG6qROzv0sA1G/AY=' https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js; object-src 'self'"
 }

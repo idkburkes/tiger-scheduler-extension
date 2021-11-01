@@ -1,0 +1,28 @@
+.review {
+margin-bottom: 5px;
+margin-left: 7px;
+margin-right: 7px;
+background-color: #dd550c;
+height: 50px;
+text-align: right;
+width: 75%;
+color: black;
+}
+
+.panel {
+    padding: 5px;
+    color: black;
+}
+
+.panelHeader {
+    color: black !important;
+}
+
+.panelBody {
+    color: black !important;
+    text-align: center !important;
+}
+
+.panelText {
+    white-space: normal;
+}
