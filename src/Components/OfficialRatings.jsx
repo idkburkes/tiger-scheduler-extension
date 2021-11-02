@@ -1,8 +1,10 @@
     /*global chrome*/
     import React, {useState, useEffect} from 'react';
-    import  Review from './Review.jsx';
-    import { Container, Stack, Spinner, Button} from 'react-bootstrap';
+    import Review from './Review.jsx';
+    import LoadingIcon from './LoadingIcon.jsx';
+    import { Stack } from 'react-bootstrap';
     import styles from '../css/OfficialRatings.css';
+    
     
     function OfficialRatings() {
     
@@ -33,7 +35,7 @@
                                 fetch(route, {
                                   method: 'POST',
                                   headers: {'Content-Type': 'application/json' },
-                                  //The body of POST will be the professor names parsed from Tiger Scheduler page 
+                                  //The body of POST request is professor names parsed from Tiger Scheduler page 
                                   body: JSON.stringify({
                                     "instructors": instructors
                                   }) 
@@ -57,7 +59,7 @@
     
                 return (
     
-                      <div className={styles.ratings}>
+                      <div className={styles.reviews}>
                         <Stack gap={2} className="col-md-5 mx-auto">
                       {instructorReviews.map((instructor) =>
                             <Review name={instructor.name}
@@ -72,18 +74,7 @@
                           )
     
               } else {
-                return ( <div> {
-                <Button variant="primary" disabled>
-                <Spinner
-                  as="span"
-                  animation="grow"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-                Searching for professors...
-              </Button>}
-               </div>  )
+                return ( <div className="loading"> <LoadingIcon/> </div>  )
               }
                     
                 
