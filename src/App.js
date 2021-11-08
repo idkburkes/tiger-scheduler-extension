@@ -13,7 +13,7 @@ function App() {
   
   return (
    
-    <Container className="App-wrapper App">
+    <Container className="App-wrapper">
                 <Row>
                      <Col>
                          <Tabs defaultActiveKey="officialRatings" 

@@ -4,7 +4,7 @@ import styles from '../css/Review.css'
 
  class Review extends React.Component {
 
-// Change cards to an accordion 
+  // Render each review as an Accordion dropdown
     render() {
       return( 
       
