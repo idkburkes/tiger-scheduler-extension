@@ -10,6 +10,7 @@ router.options('*', cors()) // Enable CORs for all origins
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 
+
 router.all('', function(req, res, next) {
  res.header("Access-Control-Allow-Origin", "*");
  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');

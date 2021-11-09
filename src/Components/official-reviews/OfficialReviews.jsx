@@ -1,20 +1,21 @@
     /*global chrome*/
     import React, {useState, useEffect} from 'react';
-    import Review from './Review.jsx';
-    import LoadingIcon from './LoadingIcon.jsx';
+    import Review from '../Review.jsx';
+    import LoadingIcon from '../LoadingIcon.jsx';
     import { Stack } from 'react-bootstrap';
-    import styles from '../css/OfficialRatings.css';
+    import styles from '../../css/OfficialRatings.css';
     
     
-    function OfficialRatings() {
+    function OfficialReviews() {
     
       const [instructors, setInstructors] = useState([]);
       const [instructorReviews, setInstructorReviews] = useState([]);
     
-    //Production and development api routes
+    //Production and development api post routes
     const devRoute = "http://localhost:5000/api/ratings";
     const prodRoute = "https://tiger-scheduler-express.herokuapp.com/api/ratings";
-    
+
+
     useEffect(() => {
       // Send message to background script to request instructors currently on the screen
       chrome.runtime.sendMessage({
@@ -57,30 +58,23 @@
   }
               // Render
               if(instructorReviews.length > 0) {
-    
                 return (
-    
                       <div className="reviews">
                         <Stack gap={2} className="col-md-5 mx-auto">
-                      {instructorReviews.map((instructor) =>
-                            <Review name={instructor.name}
+                            {instructorReviews.map((instructor) =>
+                                <Review name={instructor.name}
                                     rating={instructor.rating}
                                     wouldTakeAgain={instructor.wouldTakeAgain}
                                     difficulty={instructor.difficulty}              
                                     link={instructor.link}/>
                             )}
-                          </Stack>
+                        </Stack>
                       </div>
-                  
                           )
-    
               } else {
                 return ( <div className="loading"> <LoadingIcon/> </div>  )
               }
-                    
-                
-    
     }
     
-    export default OfficialRatings;
+    export default OfficialReviews;
     

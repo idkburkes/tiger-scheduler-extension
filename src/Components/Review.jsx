@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Card, Container, Accordion } from 'react-bootstrap';
+import {Container, Accordion } from 'react-bootstrap';
 import styles from '../css/Review.css'
 
  class Review extends React.Component {
