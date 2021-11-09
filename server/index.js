@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 const dbo = require("./db/conn"); // get db driver connection
 app.use('/', router); // Handle api endpoint routes in ./routes/router.js
 app.use(express.json()) // Apply express middlewares
+app.use(require("./routes/record"));
 
 
 // Start server

@@ -14,7 +14,7 @@ exports.fetchInstructorProfiles = async (req) => {
         for(i = 0; i < instructors.length; i++) {
             var instructor = instructors[i];
 
-            // Check if this is more than one name
+            // Handle courses with more than one instructor
             var splitNames = instructor.name.split(';');
            for(j = 0; j < splitNames.length; j++) {
             var name = format.formatName(splitNames[j]);
