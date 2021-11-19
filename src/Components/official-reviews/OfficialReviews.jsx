@@ -61,7 +61,7 @@
                 return (
                       <div className="reviews">
                         <Stack gap={2} className="col-md-5 mx-auto">
-                            {instructorReviews.map((instructor) =>
+                            {instructorReviews.filter(instructor => instructor.name.includes('t')).map((instructor) =>
                                 <Review name={instructor.name}
                                     rating={instructor.rating}
                                     wouldTakeAgain={instructor.wouldTakeAgain}

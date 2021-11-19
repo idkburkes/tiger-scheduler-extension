@@ -37,20 +37,23 @@ recordRoutes.route("/record/:id").get(function (req, res) {
 });
 
 // This section will help you create a new record.
-recordRoutes.route("/record/add").post(function (req, response) {
+recordRoutes.route("/instructor/add").post(function (req, response) {
   let db_connect = dbo.getDb();
-  let myobj = {
-    person_name: req.body.person_name,
-    person_position: req.body.person_position,
-    person_level: req.body.person_level,
+  let instructor = {
+    name: req.body.name,
+    custom_reviews: [],
+    difficulty_total: req.body.difficulty,
+    overall_total: req.body.overall,
+    review_count: 10,
+    would_take_again: 90.0
   };
-  db_connect.collection("records").insertOne(myobj, function (err, res) {
+  db_connect.collection("reviews").insertOne(instructor, function (err, res) {
     if (err) throw err;
     response.json(res);
   });
 });
 
-// This section will help you update a record by id.
+// This section will help you update a record by name.
 recordRoutes.route("/update/:name").post(function (req, response) {
   let db_connect = dbo.getDb();
   let myquery = { "name": req.body.review.name };
@@ -80,11 +83,19 @@ recordRoutes.route("/update/:name").post(function (req, response) {
     document.review_count = result.review_count + 1;
     document.difficulty_total = (result.difficulty_total * 1.0) + (newReview.difficulty * 1.0);
     document.overall_total = (result.overall_total * 1.0) + (newReview.overall * 1.0);
-    var take_again_count = result.would_take_again * result.review_count;
-    // plus sign and toFixed() handles converting perfect to 2 decimal places
-    var new_take_again_percent = +((take_again_count + 1)/(result.review_count + 1)).toFixed(2);
+    var take_again_count = (result.would_take_again * result.review_count)/100.0;
+    console.log('take again count' + take_again_count)
+   
+    if(newReview.would_take_again) {
+       // plus sign and toFixed() handles converting perfect to 2 decimal places
+      var new_take_again_percent = +((take_again_count + 1)/(result.review_count + 1)*100).toFixed(2);
+      document.would_take_again = new_take_again_percent;
+    } else {
+       // plus sign and toFixed() handles converting perfect to 2 decimal places
+      var new_take_again_percent = +(((take_again_count)/(result.review_count + 1))*100).toFixed(2);
     document.would_take_again = new_take_again_percent;
-
+    }
+    
     // Update values for this document
     let newvalues = {
       $set: {

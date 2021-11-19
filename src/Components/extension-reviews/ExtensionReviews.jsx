@@ -33,7 +33,6 @@ const prodRoute = "https://tiger-scheduler-express.herokuapp.com/update/:name";
 
 
 
-
 class ExtensionReviews extends React.Component{
 
     constructor(props) {
@@ -69,9 +68,13 @@ class ExtensionReviews extends React.Component{
         this.setState({difficulty: newDifficulty});
      }
 
+     // Handles toggling would-take-again check box
+     handleToggleWouldTakeAgain = () => {
+         this.setState({would_take_again: !this.state.would_take_again})
+     }
+
      // Handle submitting a new instructor review to database
      handleSubmitReview = () => {
-
             let newReview = {
                 name: 'test',
                 overall: this.state.overall,
@@ -79,7 +82,6 @@ class ExtensionReviews extends React.Component{
                 comment: this.state.comment,
                 would_take_again: this.state.would_take_again
             }
-
         fetch(devRoute, {
             method: 'POST',
             headers: {
@@ -144,7 +146,8 @@ class ExtensionReviews extends React.Component{
 
                 <Form.Check 
                 type="checkbox"
-                label="Would take again?" />
+                label="Would take again?"
+                onChange={this.handleToggleWouldTakeAgain} />
             </div>
 
             <div className={styles.submit_btn}> 
