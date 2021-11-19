@@ -1,12 +1,11 @@
 /**
-* --- Documentation ---
+* --- React-Select-Search Documentation ---
 *https://www.npmjs.com/package/react-select-search
 *
-*--- Code ---
+*--- React-Select-Search Code ---
 *https://github.com/tbleckert/react-select-search/blob/HEAD/style.css
 *
 */
-
 
 
 /**
@@ -221,4 +220,8 @@
 
 .submit_btn {
     text-align: right;
+}
+
+.review_content{
+text-align: left;
 }
