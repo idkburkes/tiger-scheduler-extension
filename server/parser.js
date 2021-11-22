@@ -72,10 +72,15 @@ async function getInstructorProfileByTID(tid) {
     //       ex) professor taught at another university before Auburn
     // Parse TID from search page
     function parseTID(source) {
+
         // Get relevant div element from HTML
+        var auburnBlock = 'CardSchool__School-sc-19lmz2k-1 iDlVGM">Auburn University'
+        var auburnBlockStart = source.indexOf(auburnBlock); 
         var tidDivStart = '"TeacherCard__StyledTeacherCard';
         var tidDivEnd = '">'
-        var start_index = source.indexOf(tidDivStart);
+        //Start from offset of block relevant to employment at Auburn University
+        console.log('checking auburn block at ' + (auburnBlockStart - 900));
+        var start_index = source.indexOf(tidDivStart, Math.max(0, auburnBlockStart - 900));
         var end_index = source.indexOf(tidDivEnd, start_index);
         var div = source.substring(start_index, end_index + 2);
 
