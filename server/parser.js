@@ -2,7 +2,7 @@ const format = require('./format.js');
 const axios = require('axios');
 
 
-const searchUrlPrefix = 'http://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&queryBy=teacherName&schoolName=';
+const searchUrlPrefix = 'https://www.ratemyprofessors.com/search/teachers?query='
 const instructorUrlPrefix = 'https://www.ratemyprofessors.com/ShowRatings.jsp?tid='
 
 exports.fetchInstructorProfiles = async (req) => {
@@ -39,7 +39,9 @@ exports.fetchInstructorProfiles = async (req) => {
 // Searches for an instructor and returns their profile page
  async function getSearchPage(name, college)  {
 
-    var searchUrl = searchUrlPrefix + college + '&query=' + name;
+    //sid is the School ID for Auburn University
+    var sid = 'U2Nob29sLTYw'
+    var searchUrl = searchUrlPrefix + name + '&sid=' + sid;
     
     // Get search page for this instructor/college
      return axios.get(searchUrl)
@@ -68,8 +70,8 @@ async function getInstructorProfileByTID(tid) {
         })
 }
 
-    //TODO: Handle search pages that return more than one profile
-    //       ex) professor taught at another university before Auburn
+    //TODO: Handle case where search page finds a professor but no entries
+    //      from Auburn university
     // Parse TID from search page
     function parseTID(source) {
 
@@ -143,6 +145,12 @@ function parseOverallRating(source) {
 }
 
 function parseFeedback(source) {
+
+    // Parse amount of ratings this professor has received
+    var ratingsListStart = source.indexOf('"#ratingsList">');
+    var ratingsListEnd = source.indexOf("<!--", ratingsListStart + 15);
+    var ratingsCount = source.substring(ratingsListStart + 15, ratingsListEnd);
+
     // Parse "Would Take Again" percentage
     var blockStart = source.indexOf('FeedbackNumber');
     var blockEnd = source.indexOf('</div>', blockStart);
@@ -166,7 +174,8 @@ function parseFeedback(source) {
 
     let feedback = {
         wouldTakeAgain: wouldTakeAgain,
-        difficulty: difficulty
+        difficulty: difficulty,
+        ratingsCount: ratingsCount
     }
 
     return feedback;
