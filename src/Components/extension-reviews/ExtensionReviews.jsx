@@ -148,13 +148,14 @@ class ExtensionReviews extends React.Component{
                 type="checkbox"
                 label="Would take again?"
                 onChange={this.handleToggleWouldTakeAgain} />
-            </div>
+            
 
-            <div className={styles.submit_btn}> 
-                <Button 
-                type="submit"
-                onClick={this.handleSubmitReview}
-                >Submit</Button> 
+                <div className={styles.submit_btn}> 
+                    <Button 
+                    type="submit"
+                    onClick={this.handleSubmitReview}
+                    >Submit</Button> 
+                </div>
             </div>
             </Stack>
          

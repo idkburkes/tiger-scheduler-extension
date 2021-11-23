@@ -224,4 +224,6 @@
 
 .review_content{
 text-align: left;
+overflow-y: auto;
+max-height: 90vh;
 }
