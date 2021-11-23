@@ -9,6 +9,7 @@
     function OfficialReviews() {
     
       const [instructors, setInstructors] = useState([]);
+      const [currentUniqueNames, setCurrentUniqueNames] = useState([]);
       const [instructorReviews, setInstructorReviews] = useState([]);
     
     //Production and development server urls
@@ -27,43 +28,21 @@
               console.log('Error requesting instructors from Tiger Scheduler.')
               return;
           }
-          console.log('background to react comp' + JSON.stringify(response));
+          console.log('Chrome background script found these instructor names:' + JSON.stringify(response));
           setInstructors(response);
       });
       if (instructors.length != 0) {
-          fetchInstructorData(devUrl) // Fetch all professors on screen when component is mounted  
-
-          //test get request to db
-          instructors.map(instructor => getInstructorDataFromDB(instructor));
+          setInstructorReviews([]); 
+          var uniqueNames = getUniqueNamesFromClient(instructors);
+          // Retrieve each instructor's data from database
+          uniqueNames.map(name => getInstructorDataFromDB(name));
       }
   }, [instructors])
 
 
-  const fetchInstructorData = (url) => {
-      fetch(url + '/api/ratings', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              //The body of POST request is professor names parsed from Tiger Scheduler page 
-              body: JSON.stringify({
-                  "instructors": instructors
-              })
-          })
-          .then((res) => res.json())
-          .then((json) => {
-              //Perform actions after receiving response
-              console.log('Extension received POST reponse');
-              console.log(JSON.stringify(json));
-              setInstructorReviews(json);
 
-          }).catch(function(err) {
-              console.log(err);
-          })
-  }
-
-    const getInstructorDataFromDB = (instructor) => {
-        fetch(devUrl + '/instructor/' + instructor.name , {
+    const getInstructorDataFromDB = (name) => {
+        fetch(devUrl + '/instructor/' + name , {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -73,11 +52,14 @@
         .then((json) => {
             //Perform actions after receiving response
             if(json === null) {
-                console.log('No data retrieved from database')
-                addInstructorToDB(instructor.name);
+                console.log(name + ' not found in database. Data will be' +
+                ' displayed after server processes request.')
+                addInstructorToDB(name);
             } else {
                 console.log('Extension received GET reponse from mongodb');
                 console.log(JSON.stringify(json));
+                console.log('adding this response to instructor-reviews');
+                setInstructorReviews(instructorReviews => [...instructorReviews, json])
             }
         }).catch(function(err) {
             console.log(err);
@@ -91,23 +73,41 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            //The body of POST request is instructor name parsed from Tiger Scheduler page 
             body: JSON.stringify({
                 "name": name
             })
         })
         .then((res) => res.json())
         .then((json) => {
-            //Perform actions after receiving response
-            console.log('here is response after adding ' + name + " to db: " 
-            + JSON.stringify(json));
+            // Handle Sucess
+            if(json.acknowledged === true) { 
+                console.log(name + ' sucessfully added to database');
+                getInstructorDataFromDB(name);
+            }
         }).catch(function(err) {
+            // Handle error
             console.log(err);
         })
     }
 
+
+    const getUniqueNamesFromClient = (instructorData) => {
+        var uniqueNames = [];
+
+        for(let i = 0; i < instructorData.length; i++) {
+            let splitNames = instructorData[i].name.split(';');
+            for(let j = 0; j < splitNames.length; j++) {
+                if(uniqueNames.filter(name => splitNames[j].trim() === name.trim()).length == 0) {
+                    uniqueNames.push(splitNames[j].trim());
+                }
+            }
+        }
+        setCurrentUniqueNames(uniqueNames);
+        return uniqueNames;
+    }
+
               // Render
-              if(instructorReviews.length > 0) {
+              if(instructorReviews.length > 0 && currentUniqueNames.length == instructorReviews.length) {
                 return (
                       <div className="reviews">
                         <Stack gap={2} className="col-md-5 mx-auto">

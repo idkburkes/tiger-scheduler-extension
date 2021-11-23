@@ -14,22 +14,19 @@ import styles from '../css/Review.css'
         <Accordion.Item>
            <Accordion.Header 
            eventKey={this.props.name} className={styles.panelHeader} bsPrefix="panelHeader" >
-               {this.props.name} 
+               <a href={this.props.link}>{this.props.name}</a>
            </Accordion.Header>
            <Accordion.Body
             eventKey={this.props.name} className={styles.panelBody} bsPrefix="panelBody" >
                 <div className={styles.panelText}> 
-                Overall Quality: {this.props.rating}    
+                Overall Quality: {this.props.rating}/5    
                 </div> 
                 <div className={styles.panelText}> 
-                {this.props.wouldTakeAgain} would take again
+                {this.props.wouldTakeAgain}% would take again
                 </div>
                 <div className={styles.panelText}> 
-                Level of Difficulty: {this.props.difficulty}
-                </div>
-                <div className={styles.panelText}> 
-                See on <a href={this.props.link}>ratemyprofessor.com</a>
-                </div>     
+                Level of Difficulty: {this.props.difficulty}/5
+                </div>   
           </Accordion.Body>
        </Accordion.Item>
        </Accordion>
