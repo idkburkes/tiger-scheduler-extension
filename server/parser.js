@@ -22,8 +22,9 @@ exports.fetchInstructorProfiles = async (req) => {
             // Check if response is already sending this instructor's names
             if(resp.filter(instr => instr.name === name).length > 0) {continue;} 
 
-            var college = format.formatCollege(instructor.courseInfo);
-            var searchPage = await getSearchPage(name, college);
+            //sid is the School ID for Auburn University
+            var sid = 'U2Nob29sLTYw'
+            var searchPage = await getSearchPage(name, sid);
             var tid = parseTID(searchPage);
             var instructorProfile = await getInstructorProfileByTID(tid);
             var instructorData = await parseInstructorProfile(name, instructorProfile, tid);
@@ -36,11 +37,25 @@ exports.fetchInstructorProfiles = async (req) => {
     return resp;    
 }
 
-// Searches for an instructor and returns their profile page
- async function getSearchPage(name, college)  {
+exports.fetchOneProfile = async (name) => {
+   
+      //Only sending first name
+      var splitNames = name.split(';');
+      var name = format.formatName(splitNames[0]);
 
-    //sid is the School ID for Auburn University
-    var sid = 'U2Nob29sLTYw'
+      //sid is the School ID for Auburn University
+      var sid = 'U2Nob29sLTYw'
+      var searchPage = await getSearchPage(name, sid);
+      var tid = parseTID(searchPage);
+      var instructorProfile = await getInstructorProfileByTID(tid);
+      var instructorData = await parseInstructorProfile(name, instructorProfile, tid);
+     
+     return instructorData;
+}
+
+// Searches for an instructor and returns their profile page
+ async function getSearchPage(name, sid)  {
+
     var searchUrl = searchUrlPrefix + name + '&sid=' + sid;
     
     // Get search page for this instructor/college
@@ -81,7 +96,6 @@ async function getInstructorProfileByTID(tid) {
         var tidDivStart = '"TeacherCard__StyledTeacherCard';
         var tidDivEnd = '">'
         //Start from offset of block relevant to employment at Auburn University
-        console.log('checking auburn block at ' + (auburnBlockStart - 900));
         var start_index = source.indexOf(tidDivStart, Math.max(0, auburnBlockStart - 900));
         var end_index = source.indexOf(tidDivEnd, start_index);
         var div = source.substring(start_index, end_index + 2);
@@ -108,7 +122,8 @@ async function getInstructorProfileByTID(tid) {
             rating: rating,
             wouldTakeAgain: feedback.wouldTakeAgain,
             difficulty: feedback.difficulty,
-            link: link 
+            ratingsCount: feedback.ratingsCount,
+            link: link
         }
 
         return instructorData;
