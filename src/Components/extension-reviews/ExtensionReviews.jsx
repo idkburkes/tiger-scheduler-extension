@@ -6,7 +6,8 @@ import {
     FloatingLabel,
     Form,
     Button,
-    Stack } from 'react-bootstrap';
+    Stack,
+    Alert } from 'react-bootstrap';
 // --- This component will allow users to leave professor reviews in our
 // --- extension. Completely independent from RateMyProfessor. 
 // --- These reviews will be persisted in a NoSQL database (mongoDB)
@@ -43,7 +44,8 @@ class ExtensionReviews extends React.Component{
             overall: 0.0,
             difficulty: 0.0,
             comment: '',
-            would_take_again: false
+            would_take_again: false,
+            showPopup: false
         }
     }
 
@@ -68,9 +70,22 @@ class ExtensionReviews extends React.Component{
         this.setState({difficulty: newDifficulty});
      }
 
+
      // Handles toggling would-take-again check box
      handleToggleWouldTakeAgain = () => {
          this.setState({would_take_again: !this.state.would_take_again})
+     }
+
+     handleResetState = () => {
+        this.setState({
+            searchValue: '',
+            name: '',
+            overall: 0.0,
+            difficulty: 0.0,
+            comment: '',
+            would_take_again: false,
+            showPopup: false
+        })
      }
 
      // Handle submitting a new instructor review to database
@@ -100,68 +115,87 @@ class ExtensionReviews extends React.Component{
         }).catch(function(err) {
             console.log(err);
         })
+
+        // Show submission popup
+        this.setState({ showPopup: true })
      }
 
 
   
     render() {
-        return (
-            <Stack gap={2}> 
-            <div className="review_content">
+        if(!this.state.showPopup) {
+            return (
+                <Stack gap={2}> 
+                <div className="review_content">
 
-        <SelectSearch
-                options={searchOptions.Instructors}
-                value={this.state.searchValue}
-                onChange={name => this.handleChangeSearchVal(name)}
-                search
-                emptyMessage="Not found"
-                placeholder="Choose a Professor"
-                filterOptions={fuzzySearch}        
-            />
-                <Form.Group> 
-                    <Form.Label> Overall Quality </Form.Label>
-                    <ReactStars
-                        onChange={e => this.handleChangeOverall(e)} 
-                        {...starOptions} />
-                </Form.Group>
-                <Form.Group> 
-                    <Form.Label> Difficulty </Form.Label>
-                    <ReactStars
-                        onChange={e => this.handleChangeDifficulty(e)}
-                        {...starOptions} />
-                </Form.Group>
-
-                <Form.Group> 
-                    <Form.Label> Leave a comment </Form.Label>
-                        <FloatingLabel controlId="floatingTextarea" label="Comments">
-                            <Form.Control
-                                as="textarea"
-                                placeholder="Enter detailed feedback"
-                                style={{ height: '100px', width: '100%' }}
-                                onChange={newComment => this.handleChangeComment(newComment)}
-                            />
-                    </FloatingLabel>
-                </Form.Group>
-
-                <Form.Check 
-                type="checkbox"
-                label="Would take again?"
-                onChange={this.handleToggleWouldTakeAgain} />
-            
-
-                <div className={styles.submit_btn}> 
-                    <Button 
-                    type="submit"
-                    onClick={this.handleSubmitReview}
-                    >Submit</Button> 
+            <SelectSearch
+                    options={searchOptions.Instructors}
+                    value={this.state.searchValue}
+                    onChange={name => this.handleChangeSearchVal(name)}
+                    search
+                    emptyMessage="Not found"
+                    placeholder="Choose a Professor"
+                    filterOptions={fuzzySearch}        
+                />
+                    <Form.Group> 
+                        <Form.Label> Overall Quality </Form.Label>
+                        <ReactStars
+                            onChange={e => this.handleChangeOverall(e)} 
+                            {...starOptions} />
+                    </Form.Group>
+                    <Form.Group> 
+                        <Form.Label> Difficulty </Form.Label>
+                        <ReactStars
+                            onChange={e => this.handleChangeDifficulty(e)}
+                            {...starOptions} />
+                    </Form.Group>
+    
+                    <Form.Group> 
+                        <Form.Label> Leave a comment </Form.Label>
+                            <FloatingLabel controlId="floatingTextarea" label="Comments">
+                                <Form.Control
+                                    as="textarea"
+                                    placeholder="Enter detailed feedback"
+                                    style={{ height: '100px', width: '100%' }}
+                                    onChange={newComment => this.handleChangeComment(newComment)}
+                                />
+                        </FloatingLabel>
+                    </Form.Group>
+    
+                    <Form.Check 
+                    type="checkbox"
+                    label="Would take again?"
+                    onChange={this.handleToggleWouldTakeAgain} />
+                
+    
+                    <div className={styles.submit_btn}> 
+                        <Button 
+                        type="submit"
+                        onClick={this.handleSubmitReview}
+                        >Submit</Button> 
+                    </div>
                 </div>
+                </Stack>)
+        } else {
+            return (<Alert show={this.state.showPopup} variant="success">
+            <p>
+                Your review for <b>{this.state.name}</b> has been submitted.
+                Thank you!
+            </p>
+            <hr/>
+            <div className="d-flex justify-content-end">
+                <Button onClick={this.handleResetState} variant="outline-success">
+                    Submit another review
+                </Button>
             </div>
-            </Stack>
-         
-        );
+        </Alert>)
+        }
     }
 
 }
+
+
+
 
 
 
