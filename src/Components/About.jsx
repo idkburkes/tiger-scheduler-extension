@@ -12,11 +12,7 @@ const MailToButton = ({ email, subject = '', body = '', text}) => {
   };
 
  class About extends React.Component{
-    constructor(props) {
-        super(props);
-        
-    }
-
+    
     render() {
         return (
             <>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {Container, Accordion } from 'react-bootstrap';
 import styles from '../css/Review.css'
 

@@ -3,7 +3,6 @@
     import Review from '../Review.jsx';
     import LoadingIcon from '../LoadingIcon.jsx';
     import { Stack } from 'react-bootstrap';
-    import styles from '../../css/OfficialRatings.css';
     
     // Set server-url for production and development
     const SERVER_URL = process.env.REACT_APP_ENV === 'DEV' 
@@ -15,10 +14,6 @@
       const [currentUniqueNames, setCurrentUniqueNames] = useState([]);
       const [instructorReviews, setInstructorReviews] = useState([]);
     
-    
-    // JSON file containing all Auburn professor names
-    const faculty = require('../../data/au-faculty-names.json'); 
-
     useEffect(() => {
       // Send message to background script to request instructors currently on the screen
       chrome.runtime.sendMessage({
@@ -31,7 +26,7 @@
           console.log('Chrome background script found these instructor names:' + JSON.stringify(response));
           setInstructors(response);
       });
-      if (instructors.length != 0) {
+      if (instructors.length !== 0) {
           setInstructorReviews([]); 
           var uniqueNames = getUniqueNamesFromClient(instructors);
 
@@ -96,7 +91,7 @@
         for(let i = 0; i < instructorData.length; i++) {
             let splitNames = instructorData[i].name.split(';');
             for(let j = 0; j < splitNames.length; j++) {
-                if(uniqueNames.filter(name => splitNames[j].trim() === name.trim()).length == 0) {
+                if(uniqueNames.filter(name => splitNames[j].trim() === name.trim()).length === 0) {
                     uniqueNames.push(splitNames[j].trim());
                 }
             }
@@ -106,7 +101,7 @@
     }
 
               // Render
-              if(instructorReviews.length > 0 && currentUniqueNames.length == instructorReviews.length) {
+              if(instructorReviews.length > 0 && currentUniqueNames.length === instructorReviews.length) {
                 return (
                       <div className="reviews">
                         <Stack gap={2} className="col-md-5 mx-auto">

@@ -5,11 +5,7 @@ import styles from '../css/LoadingIcon.css';
 // Icon to display while extension is loading instructor data
 
  class LoadingIcon extends React.Component{
-    constructor(props) {
-        super(props);
-        
-    }
-
+    
     render() {
         return (
             <div>
