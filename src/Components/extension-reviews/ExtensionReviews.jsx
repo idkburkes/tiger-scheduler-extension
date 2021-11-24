@@ -27,10 +27,9 @@ const starOptions = {
   // JSON file containing all Auburn professor names
   const searchOptions = require('../../data/au-faculty-names.json'); 
 
-//Production and development api post routes
-//Production and development server urls
-const devUrl = "http://localhost:5000";
-const prodUrl = "https://tiger-scheduler-express.herokuapp.com";
+// Set server-url for production and development
+const SERVER_URL = process.env.REACT_APP_ENV === 'DEV' 
+? process.env.REACT_APP_DEV_SERVER_URL : process.env.REACT_APP_PROD_SERVER_URL;
 
 
 
@@ -83,7 +82,7 @@ class ExtensionReviews extends React.Component{
                 comment: this.state.comment,
                 would_take_again: this.state.would_take_again
             }
-        fetch(devUrl + '/api/instructor/update/' + this.state.name, {
+        fetch(SERVER_URL + '/api/instructor/update/' + this.state.name, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -5,15 +5,16 @@
     import { Stack } from 'react-bootstrap';
     import styles from '../../css/OfficialRatings.css';
     
+    // Set server-url for production and development
+    const SERVER_URL = process.env.REACT_APP_ENV === 'DEV' 
+        ? process.env.REACT_APP_DEV_SERVER_URL : process.env.REACT_APP_PROD_SERVER_URL;
+
     function OfficialReviews() {
     
       const [instructors, setInstructors] = useState([]);
       const [currentUniqueNames, setCurrentUniqueNames] = useState([]);
       const [instructorReviews, setInstructorReviews] = useState([]);
     
-    //Production and development server urls
-    const devUrl = "http://localhost:5000";
-    const prodUrl = "https://tiger-scheduler-express.herokuapp.com";
     
     // JSON file containing all Auburn professor names
     const faculty = require('../../data/au-faculty-names.json'); 
@@ -42,7 +43,7 @@
 
 
     const getInstructorDataFromDB = (name) => {
-        fetch(devUrl + '/api/instructor/' + name , {
+        fetch(SERVER_URL + '/api/instructor/' + name , {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +67,7 @@
 
 
     const addInstructorToDB = (name) => {
-        fetch(devUrl + '/api/instructor/add' , {
+        fetch(SERVER_URL + '/api/instructor/add' , {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
