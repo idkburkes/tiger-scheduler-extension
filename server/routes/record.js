@@ -29,7 +29,7 @@ recordRoutes.route("/record").get(function (req, res) {
 
 
 // This section will help you get a single instructor by name
-recordRoutes.route("/instructor/:name").get(function (req, res) {
+recordRoutes.route("/api/instructor/:name").get(function (req, res) {
   let db_connect = dbo.getDb();
   //Format names received from client before query
   var formattedName = formatter.formatName(req.params.name);
@@ -57,10 +57,7 @@ recordRoutes.route("/instructor/:name").get(function (req, res) {
         instructorData.link = result.link;
 
         //Calculate "would-take-again" percentage
-        var rmp_wta_true_count = result.rmp_ratings_count * (result.rmp_wta / 100.0);
-        var wta_true_count_total = rmp_wta_true_count + result.current_wta_true;
-        var wouldTakeAgainPercent = +((wta_true_count_total / totalCount) * 100).toFixed(2);
-        instructorData.wouldTakeAgain = wouldTakeAgainPercent;
+        instructorData.wouldTakeAgain = result.current_wta;
         
         console.log('Sucessfully pulled instructor data from database ' + JSON.stringify(instructorData));
         res.json(instructorData);
@@ -75,7 +72,7 @@ recordRoutes.route("/instructor/:name").get(function (req, res) {
 
 
 // Add a new instructor to database
-recordRoutes.route("/instructor/add").post(async (req, response) => {
+recordRoutes.route("/api/instructor/add").post(async (req, response) => {
   let db_connect = dbo.getDb();
   
   var instructorData = await parser.fetchOneProfile(req.body.name);
@@ -116,9 +113,11 @@ recordRoutes.route("/instructor/add").post(async (req, response) => {
     rmp_difficulty: rmp_difficulty,
     rmp_wta: rmp_wta,
     current_wta_false: 0,
+    current_wta: rmp_wta,
     rmp_overall: rmp_overall,
     link: instructorData.link,
-    rmp_ratings_count: ratings_count}
+    rmp_ratings_count: ratings_count
+  }
 
 
   db_connect.collection("reviews").insertOne(document, function (err, res) {
@@ -128,8 +127,9 @@ recordRoutes.route("/instructor/add").post(async (req, response) => {
   });
 });
 
-// This section will help you update a record by name.
-recordRoutes.route("/update/:name").post(function (req, response) {
+
+// Update a document by name
+recordRoutes.route("/api/instructor/update/:name").post(function (req, response) {
   let db_connect = dbo.getDb();
   let myquery = { "name": req.body.review.name };
 
@@ -140,44 +140,49 @@ recordRoutes.route("/update/:name").post(function (req, response) {
     would_take_again: req.body.review.would_take_again
   }
 
-  let document = {
-    custom_reviews: [],
-    difficulty_total: 0,
-    overall_total: 0.0,
-    review_count: 0,
-    would_take_again: 0.0
-  }
-
   // Find previous values of existing document
   db_connect
   .collection("reviews")
   .findOne(myquery, function (err, result) {
     if (err) throw err;
   
-    //Update all review totals including this new review
-    document.review_count = result.review_count + 1;
-    document.difficulty_total = (result.difficulty_total * 1.0) + (newReview.difficulty * 1.0);
-    document.overall_total = (result.overall_total * 1.0) + (newReview.overall * 1.0);
-    var take_again_count = (result.would_take_again * result.review_count)/100.0;
-    console.log('take again count' + take_again_count)
-   
-    if(newReview.would_take_again) {
-       // plus sign and toFixed() handles converting perfect to 2 decimal places
-      var new_take_again_percent = +((take_again_count + 1)/(result.review_count + 1)*100).toFixed(2);
-      document.would_take_again = new_take_again_percent;
-    } else {
-       // plus sign and toFixed() handles converting perfect to 2 decimal places
-      var new_take_again_percent = +(((take_again_count)/(result.review_count + 1))*100).toFixed(2);
-    document.would_take_again = new_take_again_percent;
-    }
-    
+     // Increment ratings count
+    var total_ratings_count = result.rmp_ratings_count + result.custom_reviews.length + 1;
+
+    // Calculate current difficulty
+    var current_difficulty = result.current_difficulty + newReview.difficulty;
+
+    // Calculate current overall
+    var current_overall = result.current_overall + newReview.overall;
+
+    // Increment would-take-again true/false counts
+    let current_wta_true = 0;
+    let current_wta_false = 0;
+
+   if(newReview.would_take_again === true) {
+    current_wta_true = result.current_wta_true + 1;
+    current_wta_false = result.current_wta_false;
+
+   } else {
+    current_wta_true = result.current_wta_true + 1;
+    current_wta_false = result.current_wta_false;
+   }
+
+   // Calculate would-take-again percentages
+   let rmp_true_count =  Math.round((result.rmp_wta / 100) * result.rmp_ratings_count);
+   let total_true_count = rmp_true_count + current_wta_true;
+   console.log('rmp_true_count: ' + rmp_true_count);
+   let current_wta = Math.round((total_true_count/total_ratings_count) * 100);
+
+
     // Update values for this document
     let newvalues = {
       $set: {
-        review_count: document.review_count,
-        would_take_again: document.would_take_again,
-        difficulty_total: document.difficulty_total,
-        overall_total: document.overall_total
+        current_difficulty: current_difficulty,
+        current_overall: current_overall,
+        current_wta: current_wta,
+        current_wta_true: current_wta_true,
+        current_wta_false: current_wta_false
       },
       $push: {
         custom_reviews: newReview
@@ -187,7 +192,7 @@ recordRoutes.route("/update/:name").post(function (req, response) {
       .collection("reviews")
       .updateOne(myquery, newvalues, function (err, res) {
         if (err) throw err;
-        console.log("1 document updated");
+        console.log('1 document updated [' + myquery.name + ']');
         response.json(res);
       });
   });

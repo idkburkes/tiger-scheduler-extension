@@ -28,8 +28,9 @@ const starOptions = {
   const searchOptions = require('../../data/au-faculty-names.json'); 
 
 //Production and development api post routes
-const devRoute = "http://localhost:5000/update/:name";
-const prodRoute = "https://tiger-scheduler-express.herokuapp.com/update/:name";
+//Production and development server urls
+const devUrl = "http://localhost:5000";
+const prodUrl = "https://tiger-scheduler-express.herokuapp.com";
 
 
 
@@ -76,18 +77,17 @@ class ExtensionReviews extends React.Component{
      // Handle submitting a new instructor review to database
      handleSubmitReview = () => {
             let newReview = {
-                name: 'test',
+                name: this.state.name,
                 overall: this.state.overall,
                 difficulty: this.state.difficulty,
                 comment: this.state.comment,
                 would_take_again: this.state.would_take_again
             }
-        fetch(devRoute, {
+        fetch(devUrl + '/api/instructor/update/' + this.state.name, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            //The body of POST request is professor names parsed from Tiger Scheduler page 
             body: JSON.stringify({
                 "review": newReview
             })

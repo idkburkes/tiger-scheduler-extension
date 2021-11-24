@@ -5,7 +5,6 @@
     import { Stack } from 'react-bootstrap';
     import styles from '../../css/OfficialRatings.css';
     
-    
     function OfficialReviews() {
     
       const [instructors, setInstructors] = useState([]);
@@ -34,6 +33,7 @@
       if (instructors.length != 0) {
           setInstructorReviews([]); 
           var uniqueNames = getUniqueNamesFromClient(instructors);
+
           // Retrieve each instructor's data from database
           uniqueNames.map(name => getInstructorDataFromDB(name));
       }
@@ -42,7 +42,7 @@
 
 
     const getInstructorDataFromDB = (name) => {
-        fetch(devUrl + '/instructor/' + name , {
+        fetch(devUrl + '/api/instructor/' + name , {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -52,13 +52,11 @@
         .then((json) => {
             //Perform actions after receiving response
             if(json === null) {
-                console.log(name + ' not found in database. Data will be' +
-                ' displayed after server processes request.')
+                console.log(name + ' not found in database. Ratings will be' +
+                ' displayed after server finishes scraping data.')
                 addInstructorToDB(name);
             } else {
-                console.log('Extension received GET reponse from mongodb');
-                console.log(JSON.stringify(json));
-                console.log('adding this response to instructor-reviews');
+                console.log('Data retrieved from database: ' + JSON.stringify(json));
                 setInstructorReviews(instructorReviews => [...instructorReviews, json])
             }
         }).catch(function(err) {
@@ -68,7 +66,7 @@
 
 
     const addInstructorToDB = (name) => {
-        fetch(devUrl + '/instructor/add' , {
+        fetch(devUrl + '/api/instructor/add' , {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
