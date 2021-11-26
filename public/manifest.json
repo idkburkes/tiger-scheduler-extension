@@ -1,13 +1,13 @@
 {
   "manifest_version": 2,
 
-  "name": "Auburn University Tiger Scheduler Chrome Extension",
-  "description": "Google Chrome Extension for viewing Rate-My-Professor reviews while searching for classes on Tiger Scheduler",
+  "name": "Auburn University Professor Reviews",
+  "description": "Google Chrome Extension for viewing anonymous professor reviews while searching for classes on Tiger Scheduler",
   "version": "0.0.1",
 
   "browser_action": {
     "default_popup": "index.html",
-    "default_title": "Open the popup"
+    "default_title": "Click somewhere on Tiger Scheduler page before opening extension."
   },
   "icons": {
     "16": "au-logo16.png",
@@ -15,8 +15,6 @@
     "128": "au-logo128.png"
   },
   "permissions": [
-    "http://localhost:3000/*",
-    "activeTab",
     "https://tigerschedule.auburn.edu/*",
     "http://tigerschedule.auburn.edu/*"
   ],
