@@ -51,24 +51,7 @@ class ExtensionReviews extends React.Component{
         }
     }
 
-    componentDidMount() {
-        if(this.state.username === '') {
-            // Send message to background script to request username
-          chrome.runtime.sendMessage({
-            type: 'GET_USERNAME'
-            }, (response) => {
-                if (chrome.runtime.lastError || !response) {
-                    console.log('Error getting username from Tiger Scheduler.')
-                    return;
-                }
-            
-            // Set the name of user logged into Tiger Scheduler
-            this.handleSetUsername(response);
-                });
-            } 
-    }
-
-
+    
     // Handle changes to search value while typing instructor names
      handleChangeSearchVal = (i) => {
         this.setState({searchValue: i});
@@ -101,6 +84,7 @@ class ExtensionReviews extends React.Component{
          this.setState({would_take_again: !this.state.would_take_again})
      }
 
+
      handleResetState = () => {
         this.setState({
             searchValue: '',
@@ -122,7 +106,6 @@ class ExtensionReviews extends React.Component{
             difficulty: this.state.difficulty,
             comment: this.state.comment,
             would_take_again: this.state.would_take_again,
-            username: this.state.username
         } 
   
         fetch(SERVER_URL + '/api/instructor/update/' + this.state.name, {

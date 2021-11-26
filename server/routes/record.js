@@ -138,10 +138,7 @@ recordRoutes.route("/api/instructor/update/:name").post(function (req, response)
     difficulty: req.body.review.difficulty,
     comment: req.body.review.comment,
     would_take_again: req.body.review.would_take_again,
-    username: req.body.review.username
   }
-
-  console.log('Review submitted by ' + req.body.review.username);
 
   // Find previous values of existing document
   db_connect
