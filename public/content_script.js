@@ -33,6 +33,18 @@ function getDataFromDOM(nameSelector, collegeSelector) {
 }
 
 
+
+function sendUsernameToBackgroundPage() {
+
+  var username = document.querySelector('.autho_text').innerText;
+
+  chrome.runtime.sendMessage({
+    type: 'USERNAME_UPDATE',
+    data: username
+  })
+}
+
+
       // Notify the background script that there has been an update on Tiger Scheduler page
       function notifyBackgroundPage() {
         chrome.runtime.sendMessage({
@@ -47,6 +59,7 @@ function getDataFromDOM(nameSelector, collegeSelector) {
 window.onload = () => {
   window.addEventListener('load', notifyBackgroundPage);
   window.addEventListener("click", notifyBackgroundPage);
+  window.addEventListener('click', sendUsernameToBackgroundPage);
   notifyBackgroundPage();
 }
 

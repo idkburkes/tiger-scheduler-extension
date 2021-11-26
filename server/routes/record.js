@@ -137,8 +137,11 @@ recordRoutes.route("/api/instructor/update/:name").post(function (req, response)
     overall: req.body.review.overall,
     difficulty: req.body.review.difficulty,
     comment: req.body.review.comment,
-    would_take_again: req.body.review.would_take_again
+    would_take_again: req.body.review.would_take_again,
+    username: req.body.review.username
   }
+
+  console.log('Review submitted by ' + req.body.review.username);
 
   // Find previous values of existing document
   db_connect
@@ -171,7 +174,6 @@ recordRoutes.route("/api/instructor/update/:name").post(function (req, response)
    // Calculate would-take-again percentages
    let rmp_true_count =  Math.round((result.rmp_wta / 100) * result.rmp_ratings_count);
    let total_true_count = rmp_true_count + current_wta_true;
-   console.log('rmp_true_count: ' + rmp_true_count);
    let current_wta = Math.round((total_true_count/total_ratings_count) * 100);
 
 
