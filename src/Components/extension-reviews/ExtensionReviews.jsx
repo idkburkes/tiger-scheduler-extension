@@ -1,3 +1,4 @@
+/*global chrome*/
 import React from 'react';
 import ReactStars from "react-rating-stars-component";
 import SelectSearch, { fuzzySearch } from 'react-select-search';
@@ -45,9 +46,28 @@ class ExtensionReviews extends React.Component{
             difficulty: 0.0,
             comment: '',
             would_take_again: false,
-            showPopup: false
+            showPopup: false,
+            username: ''
         }
     }
+
+    componentDidMount() {
+        if(this.state.username === '') {
+            // Send message to background script to request username
+          chrome.runtime.sendMessage({
+            type: 'GET_USERNAME'
+            }, (response) => {
+                if (chrome.runtime.lastError || !response) {
+                    console.log('Error getting username from Tiger Scheduler.')
+                    return;
+                }
+            
+            // Set the name of user logged into Tiger Scheduler
+            this.handleSetUsername(response);
+                });
+            } 
+    }
+
 
     // Handle changes to search value while typing instructor names
      handleChangeSearchVal = (i) => {
@@ -70,6 +90,11 @@ class ExtensionReviews extends React.Component{
         this.setState({difficulty: newDifficulty});
      }
 
+    // Handle setting user logged into Tiger Scheduler
+     handleSetUsername = (username) => {
+         this.setState({username: username});
+     }
+
 
      // Handles toggling would-take-again check box
      handleToggleWouldTakeAgain = () => {
@@ -90,13 +115,16 @@ class ExtensionReviews extends React.Component{
 
      // Handle submitting a new instructor review to database
      handleSubmitReview = () => {
-            let newReview = {
-                name: this.state.name,
-                overall: this.state.overall,
-                difficulty: this.state.difficulty,
-                comment: this.state.comment,
-                would_take_again: this.state.would_take_again
-            }
+
+        var newReview = {
+            name: this.state.name,
+            overall: this.state.overall,
+            difficulty: this.state.difficulty,
+            comment: this.state.comment,
+            would_take_again: this.state.would_take_again,
+            username: this.state.username
+        } 
+  
         fetch(SERVER_URL + '/api/instructor/update/' + this.state.name, {
             method: 'POST',
             headers: {
@@ -109,7 +137,6 @@ class ExtensionReviews extends React.Component{
         .then((res) => res.json())
         .then((json) => {
             //Perform actions after receiving response
-            console.log('Extension received POST reponse');
             console.log(JSON.stringify(json));
 
         }).catch(function(err) {

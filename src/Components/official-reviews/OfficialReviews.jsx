@@ -3,6 +3,7 @@
     import Review from '../Review.jsx';
     import LoadingIcon from '../LoadingIcon.jsx';
     import { Stack } from 'react-bootstrap';
+    import styles from '../../css/OfficialRatings.css';
     
     // Set server-url for production and development
     const SERVER_URL = process.env.REACT_APP_ENV === 'DEV' 
